@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.matalex.appmanager.databinding.ActivityMainBinding
+import java.text.SimpleDateFormat
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,11 +39,13 @@ class MainActivity : AppCompatActivity() {
         for (packageInfo in packages) {
             if (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
 
+                val formatter = SimpleDateFormat("dd.MM.yyyy, hh:mm:ss")
+
                 val appItem = AppItem(
                     appIcon = packageInfo.applicationInfo.loadIcon(packageManager),
                     appName = packageInfo.applicationInfo.loadLabel(packageManager).toString(),
                     appPackage = packageInfo.packageName,
-                    appDate = packageInfo.firstInstallTime.toString() //TODO перевести в читаемый формат
+                    appDate = formatter.format(packageInfo.firstInstallTime)
                 )
                 appItemsList.add(appItem)
             }
