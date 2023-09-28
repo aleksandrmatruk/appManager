@@ -1,10 +1,8 @@
 package com.matalex.appmanager
 
-import android.content.pm.PackageManager
+import android.content.pm.ApplicationInfo
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.matalex.appmanager.databinding.ActivityMainBinding
 
@@ -24,38 +22,31 @@ class MainActivity : AppCompatActivity() {
         setUpAdapter()
     }
 
-
     private fun setUpAdapter() {
 
         val adapter = AppItemAdapter(this, appItemsList) // чтоб память не текла?
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL    //разделительная линия между view-элементами
-            )
-        )
+//        binding.recyclerView.addItemDecoration(
+//           DividerItemDecoration(this, DividerItemDecoration.VERTICAL)   //разделительная линия между view-элементами
+//        )
     }
 
     private fun populateList() {
-        val packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+        val packages = packageManager.getInstalledPackages(0)
         for (packageInfo in packages) {
-            Log.d(
-                "MyLog",
-                "Package name: ${packageInfo.packageName}  ${packageInfo.name}  ${
-                    packageInfo.loadIcon(packageManager)
-                }"
-            )
-            val appItem = AppItem(
-                appIcon = packageInfo.loadIcon(packageManager),
-                appName = packageInfo.name ?: ("no name"),
-                appPackage = packageInfo.packageName,
-                appDate = "10.10.2010"
-            )
-            appItemsList.add(appItem)
+            if (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
+
+                val appItem = AppItem(
+                    appIcon = packageInfo.applicationInfo.loadIcon(packageManager),
+                    appName = packageInfo.applicationInfo.loadLabel(packageManager).toString(),
+                    appPackage = packageInfo.packageName,
+                    appDate = packageInfo.firstInstallTime.toString() //TODO перевести в читаемый формат
+                )
+                appItemsList.add(appItem)
+            }
+
         }
     }
-
 }
