@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         for (packageInfo in packages) {
             if (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
 
-                val formatter = SimpleDateFormat("dd.MM.yyyy, hh:mm:ss")
+                val formatter = SimpleDateFormat("dd MMMM yyyy   HH:mm ")
 
                 val appItem = AppItem(
                     appIcon = packageInfo.applicationInfo.loadIcon(packageManager),
@@ -48,6 +48,10 @@ class MainActivity : AppCompatActivity() {
                     appDate = formatter.format(packageInfo.firstInstallTime)
                 )
                 appItemsList.add(appItem)
+
+            }
+            appItemsList.sortBy {
+                it.appDate
             }
 
         }
